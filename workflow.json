@@ -1,0 +1,469 @@
+{
+  "name": "data",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -896,
+        -96
+      ],
+      "id": "24f0acd9-4da9-428d-84be-7fc27b526963",
+      "name": "Schedule Trigger",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c011a2bc-ee26-403c-858c-4e0f305c989f",
+              "leftValue": "={{ $json['Delivery Status'] }}",
+              "rightValue": "work order cancelled",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "03b47a9b-dbae-43b5-8830-33fce748b361",
+              "leftValue": "={{ $json['Delivery Status'] }}",
+              "rightValue": "Delivered",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -208,
+        128
+      ],
+      "id": "5c870af0-b166-44dd-9f89-a54c6c455054",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "sendTo": "mhusnainali.sawaeng@gmail.com",
+        "subject": "Status: Delivered but  having empty cells",
+        "message": "={{ $json.email_body }}\n\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        96
+      ],
+      "id": "59f11acc-da03-4486-8ced-3a9d81fe29a6",
+      "name": "Send a message2",
+      "webhookId": "d51c976a-27a4-4d79-bcd5-c76951f6cff6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mGlxeWTcJMUUkR9P",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1hOj3CRdg66goZhKmWR7qUSQVeaTdHjcD0_cRw6CqnTU",
+          "mode": "list",
+          "cachedResultName": "LMC_PO_Status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hOj3CRdg66goZhKmWR7qUSQVeaTdHjcD0_cRw6CqnTU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "all",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hOj3CRdg66goZhKmWR7qUSQVeaTdHjcD0_cRw6CqnTU/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -608,
+        -144
+      ],
+      "id": "338e941b-ef45-4322-b708-1d220c275630",
+      "name": "Taking Data from sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "AjGvuMxyD27wvE9S",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7b34f693-0ee9-4396-8ea0-441a2a7f98e2",
+              "leftValue": "={{ $json['Delivery Status'] }}",
+              "rightValue": "Delivered",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -400,
+        -32
+      ],
+      "id": "88d53968-896e-4d69-8179-a5ac9f77a7c7",
+      "name": "Delivered or not"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f49d2ce2-739a-49d8-ad13-a89d4fbc8223",
+              "leftValue": "={{ $json.GRN }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "b2fe618c-552f-42c9-a09c-5873aa573c14",
+              "leftValue": "={{ $json.BILL }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "d062ab33-6ee7-4dc2-b984-6ae8957fb4d8",
+              "leftValue": "={{ $json.Invoice }}",
+              "rightValue": null,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "2dee01e9-2a18-4694-9d58-ea70e2afe4f1",
+              "leftValue": "={{ $json.Payment }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -112,
+        -80
+      ],
+      "id": "bf3ec91b-e426-40f2-a7f6-4fd6791fd94a",
+      "name": "Empty cells"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "PO#"
+            },
+            {
+              "fieldToAggregate": "Description"
+            },
+            {
+              "fieldToAggregate": "GRN"
+            },
+            {
+              "fieldToAggregate": "BILL"
+            },
+            {
+              "fieldToAggregate": "Invoice"
+            },
+            {
+              "fieldToAggregate": "Payment"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        112,
+        -192
+      ],
+      "id": "e1c35d75-5bd7-4d17-8a98-5097152dafbe",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "PO#"
+            },
+            {
+              "fieldToAggregate": "Description"
+            },
+            {
+              "fieldToAggregate": "Delivery Status"
+            },
+            {
+              "fieldToAggregate": "GRN"
+            },
+            {
+              "fieldToAggregate": "BILL"
+            },
+            {
+              "fieldToAggregate": "Invoice"
+            },
+            {
+              "fieldToAggregate": "Payment"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        176,
+        160
+      ],
+      "id": "e8d918cb-8270-4d6a-9cbf-4e5cd7839779",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "language": "pythonNative",
+        "pythonCode": "# Get all items from the Aggregate node\nitems = _items\n\n# Start building the HTML table\nhtml_output = \"\"\"\n<p>Dear sir,</p>\n<p>This is a reminder regarding your outstanding balance. Please see the details below:</p>\n\n<table border=\"1\" style=\"border-collapse: collapse; width: 100%; font-family: Arial, sans-serif;\">\n  <thead>\n    <tr style=\"background-color: #f2f2f2;\">\n      <th style=\"padding: 10px; text-align: left;\">Delivery Status</th>\n      <th style=\"padding: 10px; text-align: left;\">PO</th>\n      <th style=\"padding: 10px; text-align: left;\">Description</th>\n      <th style=\"padding: 10px; text-align: left;\">GRN</th>\n      <th style=\"padding: 10px; text-align: left;\">BILL</th>\n      <th style=\"padding: 10px; text-align: left;\">INVOICE</th>\n      <th style=\"padding: 10px; text-align: left;\">PAYMENT</th>\n    </tr>\n  </thead>\n  <tbody>\n\"\"\"\n\n# Loop through all items and build table rows\nfor item in items:\n    json_data = item['json']\n    \n    # Get the aggregated arrays\n    po_list = json_data.get('PO#', [])\n    des_list = json_data.get('Description', [])\n    grn_list = json_data.get('GRN', [])\n    bill_list = json_data.get('BILL', [])\n    invoice_list = json_data.get('Invoice', [])\n    payment_list = json_data.get('Payment', [])\n    \n    # Create rows for each item in the arrays\n    max_length = max(len(po_list), len(des_list), len(grn_list), len(bill_list), len(invoice_list), len(payment_list))\n    \n    for i in range(max_length):\n        pos = po_list[i] if i < len(po_list) else ''\n        des = des_list[i] if i < len(des_list) else ''\n        grn = grn_list[i] if i < len(grn_list) else ''\n        bill = bill_list[i] if i < len(bill_list) else ''\n        invoice = invoice_list[i] if i < len(invoice_list) else ''\n        payment = payment_list[i] if i < len(payment_list) else ''\n\n        \n        \n        html_output += f\"\"\"\n        \n    <tr>\n      <td style=\"padding: 10px;\">Delivered</td>\n      <td style=\"padding: 10px; color: red; font-weight: bold;\">{pos}</td>\n      <td style=\"padding: 10px; color: red; font-weight: bold;\">{des}</td>\n      <td style=\"padding: 10px; color: red; font-weight: bold;\">{grn}</td>\n      <td style=\"padding: 10px; color: red; font-weight: bold;\">{bill}</td>\n      <td style=\"padding: 10px; color: red; font-weight: bold;\">{invoice}</td>\n      <td style=\"padding: 10px; color: red; font-weight: bold;\">{payment}</td>\n    </tr>\n\"\"\"\n\n# Close the table and add footer\nhtml_output += \"\"\"\n  </tbody>\n</table>\n<p>Please settle this as soon as possible. Thank you!</p>\n\"\"\"\n\n# Return the HTML as email_body\nreturn [{'json': {'email_body': html_output}}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        464,
+        -112
+      ],
+      "id": "2a7084f9-fc37-4fdd-aa50-c4d054d9fabf",
+      "name": "Code Delivered with empty cell"
+    },
+    {
+      "parameters": {
+        "language": "pythonNative",
+        "pythonCode": "# Get all items from the Aggregate node\nitems = _items\n\n# Start building the HTML table\nhtml_output = \"\"\"\n<p>Dear sir,</p>\n<p>This is a reminder regarding your outstanding balance. Please see the details below:</p>\n\n<table border=\"1\" style=\"border-collapse: collapse; width: 100%; font-family: Arial, sans-serif;\">\n  <thead>\n    <tr style=\"background-color: #f2f2f2;\">\n      <th style=\"padding: 10px; text-align: left;\">Delivery Status</th>\n      <th style=\"padding: 10px; text-align: left;\">PO</th>\n      <th style=\"padding: 10px; text-align: left;\">Description</th>\n      <th style=\"padding: 10px; text-align: left;\">GRN</th>\n      <th style=\"padding: 10px; text-align: left;\">BILL</th>\n      <th style=\"padding: 10px; text-align: left;\">INVOICE</th>\n      <th style=\"padding: 10px; text-align: left;\">PAYMENT</th>\n    </tr>\n  </thead>\n  <tbody>\n\"\"\"\n\n# Loop through all items and build table rows\nfor item in items:\n    json_data = item['json']\n    \n    # Get the aggregated arrays\n    dilS_list = json_data.get('Delivery Status', [])\n    po_list = json_data.get('PO#', [])\n    des_list = json_data.get('Description', [])\n    grn_list = json_data.get('GRN', [])\n    bill_list = json_data.get('BILL', [])\n    invoice_list = json_data.get('Invoice', [])\n    payment_list = json_data.get('Payment', [])\n    \n    # Create rows for each item in the arrays\n    max_length = max(len(dilS_list), len(po_list), len(des_list), len(grn_list), len(bill_list), len(invoice_list), len(payment_list))\n    \n    for i in range(max_length):\n        dil = dilS_list[i] if i < len(dilS_list) else ''\n        pos = po_list[i] if i < len(po_list) else ''\n        des = des_list[i] if i < len(des_list) else ''\n        grn = grn_list[i] if i < len(grn_list) else ''\n        bill = bill_list[i] if i < len(bill_list) else ''\n        invoice = invoice_list[i] if i < len(invoice_list) else ''\n        payment = payment_list[i] if i < len(payment_list) else ''\n\n        \n        \n        html_output += f\"\"\"\n        \n    <tr>\n      <td style=\"padding: 10px;\">{dil}</td>\n      <td style=\"padding: 10px; color: red; font-weight: bold;\">{pos}</td>\n      <td style=\"padding: 10px; color: red; font-weight: bold;\">{des}</td>\n      <td style=\"padding: 10px; color: red; font-weight: bold;\">{grn}</td>\n      <td style=\"padding: 10px; color: red; font-weight: bold;\">{bill}</td>\n      <td style=\"padding: 10px; color: red; font-weight: bold;\">{invoice}</td>\n      <td style=\"padding: 10px; color: red; font-weight: bold;\">{payment}</td>\n    </tr>\n\"\"\"\n\n# Close the table and add footer\nhtml_output += \"\"\"\n  </tbody>\n</table>\n<p>Please settle this as soon as possible. Thank you!</p>\n\"\"\"\n\n# Return the HTML as email_body\nreturn [{'json': {'email_body': html_output}}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        176
+      ],
+      "id": "d4965096-9b62-4c4e-866b-c3e967b54498",
+      "name": "Code with other than delivered"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        272
+      ],
+      "id": "a94740b0-9593-4242-acfe-9ea018328911",
+      "name": "Wait",
+      "webhookId": "b93c7d3d-006b-4619-9584-c3a9fdf213fa"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Taking Data from sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Taking Data from sheet": {
+      "main": [
+        [
+          {
+            "node": "Delivered or not",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delivered or not": {
+      "main": [
+        [
+          {
+            "node": "Empty cells",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Empty cells": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message2": {
+      "main": [
+        []
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Code Delivered with empty cell",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Code with other than delivered",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Delivered with empty cell": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code with other than delivered": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "c922d4c7-86dd-47d4-84b4-037efaea51c2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5b1e15ef1283d4e79553b50845b58861314852763db37e402c8eaa6287808aae"
+  },
+  "id": "DSmhdHz4TYCcIBBX",
+  "tags": []
+}
